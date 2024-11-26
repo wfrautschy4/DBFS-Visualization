@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Depth First Traversal with Tree Visualization</title>
+    <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+    <div id="container">
+        <div id="network"></div>
+        <div id="tree"></div>
+    </div>
+    <div id="data-container">
+        <table>
+            <tr>
+                <td class="left">
+                    <div id="queue"><strong class="path-title">Traversed Path:</strong> <span id="stack-container"></span></div>
+                </td>
+                <td class="middle">
+                    <p id="destination"></p>
+                    <div style="width:100%;">
+                        <a id="reset-button">RESET</a>
+                    </div>
+                </td>
+                <td class="right">
+                    <p>Press <strong>Enter</strong> to start the traversal.</p>
+                    <p>Auto-Traverse: <input class="auto-traverse" type="checkbox" checked></p>
+                    <p>Nagivate All Neighbors: <input class="navAllNeighbors" type="checkbox" disabled></p>
+                    <p>Speed: <input class="speed-range" type="range" value="100"></p>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Include Vis.js Library -->
+    <script src="https://unpkg.com/vis-network@9.1.2/dist/vis-network.min.js"></script>
+    <script src="assets/scripts.js"></script>
+    <script>
+        
+        edgeTraversingIcon = 'test text';
+
+
+        // Generate the graph
+        const graphDiv = document.querySelector("#network");
+        const { nodes: graphNodes, edges: graphEdges } = generateRandomGraph();
+        const graphData = {nodes: new vis.DataSet(graphNodes), edges: new vis.DataSet(graphEdges)};
+        const optionsGraph = {
+            physics: { enabled: true }
+        };
+        const networkGraph = new vis.Network(graphDiv, graphData, optionsGraph);
+
+        //Initialize Tree
+        const treeDiv = document.querySelector("#tree");
+        const treeData = { nodes: new vis.DataSet([]), edges: new vis.DataSet([]) };
+        const optionsTree = {
+            layout: { hierarchical: { direction: 'UD', sortMethod: 'directed', levelSeparation: 150} },
+            physics: { enabled: false },
+            interaction: {
+                dragNodes: false, // Keep nodes fixed in hierarchy
+                zoomView: false,
+                dragView: false,
+            },
+            autoResize: true
+        };
+        const networkTree = new vis.Network(treeDiv, treeData, optionsTree);
+
+        
+        // Choose a random destination node
+        var destinationNode = Math.floor(Math.random() * graphNodes.length-1) + 2;
+        document.getElementById("destination").innerHTML = `<strong>Destination Node:</strong> ${destinationNode}`;
+
+
+        //Create button function
+        const resetButton = document.querySelector("#reset-button");
+        resetButton.addEventListener("click", () => {
+            //Clear Previous Graphs
+            graphData.nodes.clear();
+            graphData.edges.clear();
+            treeData.nodes.clear(); //Tree stays cleared
+            treeData.edges.clear();
+
+            //Reinitialize with new graph
+            const {nodes:newGraphNodes, edges: newGraphEdges} = generateRandomGraph();
+            graphData.nodes.add(newGraphNodes);
+            graphData.edges.add(newGraphEdges);
+
+            //Find new Destination Node
+            destinationNode = Math.floor(Math.random() * newGraphNodes.length-1) + 2;
+            document.getElementById("destination").innerHTML = `<strong>Destination Node:</strong> ${destinationNode}`;
+
+            //Reinitialize DFS
+            const edgesArray = graphData.edges.get();
+            initializeTraversal(edgesArray, 1);
+
+            //Clear Queue and Text
+            document.querySelector('.path-title').innerHTML = "Traversed Path:"
+            updateStackDisplay([]); //Clear the queue
+
+            //Resize Graph Window
+            networkGraph.stabilize();
+
+        });
+
+        function initializeTraversal(edges, startNode) {
+            traversalStack = [];
+            traversalStack.push(startNode);
+            visited.clear();
+            parent = {}; // Clear parent mapping
+            path = []; // Reset the path
+            destinationFound = false; // Reset the destination found flag
+        };
+
+
+        // BFS Traversal state
+        let traversalStack = [];
+        let visited = new Set();
+        let parent = {}; // Stores the parent of each node
+        let path = []; // Stores the shortest path to the destination
+        let destinationFound = false; // Flag to check if destination is found
+
+    
+        const stepTraversal = () => {
+            if (traversalStack.length === 0 || destinationFound) {
+                return; // If the queue is empty or destination is found, stop
+            }
+            // Dequeue the current node
+            const currentNode = traversalStack.pop();
+
+            if (visited.has(currentNode)) {
+                // Skip if already visited
+                stepTraversal();
+                return;
+            }
+
+            // Mark as visited
+            visited.add(currentNode);
+            path.push(currentNode); // Add to path
+            updateStackDisplay(path); // Update path display
+
+            //Read Speed Slider data
+            const speedRange = document.querySelector(".speed-range");
+            var msDelay = 10*(100 - speedRange.value) + 200;
+
+            // Highlight the current node
+            graphData.nodes.update({ id: currentNode, color: { background: 'red' } });
+
+            //Add Edge Icon to edge between currentNode and parentNode
+            const edgeID = getEdgeId(currentNode, parent[currentNode]);
+            graphData.edges.update({id: edgeID, label: edgeTraversingIcon}); //Updates the hidden edge
+
+
+            if (currentNode === destinationNode) {
+                // If the current node is the destination, stop traversal
+                graphData.nodes.update({ id: currentNode, color: { background: 'gold' } }); // Highlight destination
+                graphData.edges.update({id: edgeID, label: ' '});
+                destinationFound = true; // Mark destination as found
+
+                // Reconstruct the shortest path
+                let node = destinationNode;
+                let shortestPath = [];
+                while (node !== undefined) {
+                    shortestPath.push(node);
+                    node = parent[node];
+                }
+                shortestPath.reverse(); // The shortest path is in reverse order
+                path = shortestPath; // Update the path with the shortest path
+                document.querySelector('.path-title').innerHTML = "Shortest Path:"
+                updateStackDisplay(path); // Update the queue with the shortest path
+
+            
+                // Add the destination node to the tree and mark the parent/child relationship
+                treeData.nodes.add({ id: currentNode, label: String(currentNode) });
+                if (parent[currentNode] !== undefined) {
+                    treeData.edges.add({ from: parent[currentNode], to: currentNode });
+                }
+
+                highlightTreePath(path);
+                highlightGraphPath(path);
+
+                networkTree.stabilize();
+
+                return;
+            }
+
+            setTimeout(() => {
+                if(destinationFound){return;}
+
+                // Mark the node as processed (green)
+                graphData.nodes.update({ id: currentNode, color: { background: 'green' } });
+                graphData.edges.update({id: edgeID, label: ' '});
+                
+
+                // Add this node to the tree on the right side
+                treeData.nodes.add({ id: currentNode, label: String(currentNode) });
+                if (parent[currentNode] !== undefined) {
+                    treeData.edges.add({ from: parent[currentNode], to: currentNode });
+                }
+                networkTree.stabilize();
+
+                // Enqueue neighbors that haven't been visited
+                const neighbors = graphData.edges
+                    .get()
+                    .filter(edge => edge.from === currentNode && !visited.has(edge.to))
+                    .map(edge => edge.to);
+
+                neighbors.forEach(neighbor => {
+                    if (!visited.has(neighbor) && !parent[neighbor]) {
+                        // Assign parent only if it's not already assigned
+                        parent[neighbor] = currentNode;
+                        traversalStack.push(neighbor);
+                    }
+                });
+
+
+                const checkbox = document.querySelector(".auto-traverse");
+                if (checkbox.checked && !(currentNode == destinationNode)){
+                    setTimeout(() => {
+                        stepTraversal();
+                    }, msDelay);
+                }
+            }, msDelay);
+
+            const navAllNeighborsCheckbox = document.querySelector(".navAllNeighbors");
+            if(navAllNeighborsCheckbox.checked){
+                stepTraversal();
+            }
+        }
+
+        // Initialize traversal on page load
+        document.addEventListener("DOMContentLoaded", () => {
+            const edgesArray = graphData.edges.get();
+            initializeTraversal(edgesArray, 1); // Start traversal at node 1
+            updateStackDisplay(path); // Initialize empty path display
+        });
+
+        // Step through traversal on Enter key press
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                stepTraversal();
+            }
+        });
+    </script>
+</body>
+</html>
