@@ -15,9 +15,11 @@
         <table>
             <tr>
                 <td class="left">
+                    
                     <div id="queue"><strong class="path-title">Traversed Path:</strong> <span id="stack-container"></span></div>
                 </td>
                 <td class="middle">
+                    <h2>Depth-First Search</h2>
                     <p id="destination"></p>
                     <div style="width:100%;">
                         <a id="reset-button">RESET</a>
@@ -38,12 +40,12 @@
     <script src="assets/scripts.js"></script>
     <script>
         
-        edgeTraversingIcon = 'test text';
+        edgeTraversingIcon = '🚴';
 
 
         // Generate the graph
         const graphDiv = document.querySelector("#network");
-        const { nodes: graphNodes, edges: graphEdges } = generateRandomGraph();
+        const { nodes: graphNodes, edges: graphEdges } = generateGraphToGetHome();
         const graphData = {nodes: new vis.DataSet(graphNodes), edges: new vis.DataSet(graphEdges)};
         const optionsGraph = {
             physics: { enabled: true }
@@ -67,8 +69,8 @@
 
         
         // Choose a random destination node
-        var destinationNode = Math.floor(Math.random() * graphNodes.length-1) + 2;
-        document.getElementById("destination").innerHTML = `<strong>Destination Node:</strong> ${destinationNode}`;
+        var destinationNodeID = 5; //Old Man's House
+        document.getElementById("destination").innerHTML = `<strong>Destination Node:</strong> ${graphData.nodes.get(destinationNodeID).label}`;
 
 
         //Create button function
@@ -86,8 +88,8 @@
             graphData.edges.add(newGraphEdges);
 
             //Find new Destination Node
-            destinationNode = Math.floor(Math.random() * newGraphNodes.length-1) + 2;
-            document.getElementById("destination").innerHTML = `<strong>Destination Node:</strong> ${destinationNode}`;
+            destinationNodeID = Math.floor(Math.random() * newGraphNodes.length-1) + 2;
+            document.getElementById("destination").innerHTML = `<strong>Destination Node:</strong> ${destinationNodeID}`;
 
             //Reinitialize DFS
             const edgesArray = graphData.edges.get();
@@ -135,7 +137,7 @@
 
             // Mark as visited
             visited.add(currentNode);
-            path.push(currentNode); // Add to path
+            path.push(graphData.nodes.get(currentNode).label); // Add to path
             updateStackDisplay(path); // Update path display
 
             //Read Speed Slider data
@@ -147,38 +149,48 @@
 
             //Add Edge Icon to edge between currentNode and parentNode
             const edgeID = getEdgeId(currentNode, parent[currentNode]);
-            graphData.edges.update({id: edgeID, label: edgeTraversingIcon}); //Updates the hidden edge
+            graphData.edges.update({
+                id: edgeID, 
+                label: edgeTraversingIcon, 
+                font: {
+                    size: 50, // Set the font size (default is 14)}); //Updates the hidden edge
+                }
+            }); 
 
 
-            if (currentNode === destinationNode) {
+            if (currentNode === destinationNodeID) {
                 // If the current node is the destination, stop traversal
                 graphData.nodes.update({ id: currentNode, color: { background: 'gold' } }); // Highlight destination
                 graphData.edges.update({id: edgeID, label: ' '});
                 destinationFound = true; // Mark destination as found
 
-                // Reconstruct the shortest path
-                let node = destinationNode;
-                let shortestPath = [];
-                while (node !== undefined) {
-                    shortestPath.push(node);
-                    node = parent[node];
-                }
-                shortestPath.reverse(); // The shortest path is in reverse order
-                path = shortestPath; // Update the path with the shortest path
-                document.querySelector('.path-title').innerHTML = "Shortest Path:"
-                updateStackDisplay(path); // Update the queue with the shortest path
-
-            
                 // Add the destination node to the tree and mark the parent/child relationship
-                treeData.nodes.add({ id: currentNode, label: String(currentNode) });
+                nodeLabel = graphData.nodes.get(currentNode).label;
+                treeData.nodes.add({ id: currentNode, label: nodeLabel });
                 if (parent[currentNode] !== undefined) {
                     treeData.edges.add({ from: parent[currentNode], to: currentNode });
                 }
 
-                highlightTreePath(path);
-                highlightGraphPath(path);
+                // Reconstruct the shortest path
+                let node = destinationNodeID;
+                let shortestIDPath = [];
+                let shortestLabelPath = [];
+                while (node !== undefined) {
+                    nodeLabel = graphData.nodes.get(node).label;
+                    shortestLabelPath.push(nodeLabel);
+                    shortestIDPath.push(node);
+                    node = parent[node];
+                }
+                shortestLabelPath.reverse();
+                shortestIDPath.reverse(); // The shortest path is in reverse order
+                document.querySelector('.path-title').innerHTML = "Shortest Path:"
+
+                updateStackDisplay(shortestLabelPath); // Update the queue with the shortest path
+                highlightTreePath(shortestIDPath);
+                highlightGraphPath(shortestIDPath);
 
                 networkTree.stabilize();
+
 
                 return;
             }
@@ -192,7 +204,8 @@
                 
 
                 // Add this node to the tree on the right side
-                treeData.nodes.add({ id: currentNode, label: String(currentNode) });
+                nodeLabel = graphData.nodes.get(currentNode).label;
+                treeData.nodes.add({ id: currentNode, label: nodeLabel });
                 if (parent[currentNode] !== undefined) {
                     treeData.edges.add({ from: parent[currentNode], to: currentNode });
                 }
@@ -214,7 +227,7 @@
 
 
                 const checkbox = document.querySelector(".auto-traverse");
-                if (checkbox.checked && !(currentNode == destinationNode)){
+                if (checkbox.checked && !(currentNode == destinationNodeID)){
                     setTimeout(() => {
                         stepTraversal();
                     }, msDelay);

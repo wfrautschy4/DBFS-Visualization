@@ -29,6 +29,45 @@ function generateRandomGraph() {
     }
     return { nodes, edges };
 };
+function generateGraphToGetHome(){
+    const nodes = [];
+    const edges = [];
+
+    //Create all Nodes
+    nodes.push({id: 1, label: "Baker Systems", color: {background: 'lightgray'}});
+    nodes.push({id: 2, label: "18th Ave Lib", color: {background: 'lightgray'}});
+    nodes.push({id: 3, label: "Curl Market", color: {background: 'lightgray'}});
+    nodes.push({id: 4, label: "High Street", color: {background: 'lightgray'}});
+    nodes.push({id: 5, label: "Old Man's Home", color: {background: 'lightgray'}});
+    nodes.push({id: 6, label: "Cockins Hall", color: {background: 'lightgray'}});
+    nodes.push({id: 7, label: "Enarson Classroom", color: {background: 'lightgray'}});
+    nodes.push({id: 8, label: "McPherson Lab", color: {background: 'lightgray'}});
+    nodes.push({id: 9, label: "Panda Express", color: {background: 'lightgray'}});
+    nodes.push({id: 10, label: "Target", color: {background: 'lightgray'}});
+    nodes.push({id: 11, label: "Donatos", color: {background: 'lightgray'}});
+    nodes.push({id: 12, label: "Dreese Labs", color: {background: 'lightgray'}});
+
+
+    //Create all Edges
+    edges.push({from: 1, to: 12, arrows: 'to'});
+    edges.push({from: 1, to: 7, arrows: 'to'});
+    edges.push({from: 1, to: 6, arrows: 'to'});
+    edges.push({from: 6, to: 7, arrows: 'to'});
+    edges.push({from: 3, to: 4, arrows: 'to'});
+    edges.push({from: 4, to: 10, arrows: 'to'});
+    edges.push({from: 4, to: 9, arrows: 'to'});
+    edges.push({from: 4, to: 11, arrows: 'to'});
+    edges.push({from: 2, to: 8, arrows: 'to'});
+    edges.push({from: 1, to: 2, arrows: 'to'});
+    edges.push({from: 8, to: 3, arrows: 'to'});
+    edges.push({from: 4, to: 5, arrows: 'to'});
+
+
+
+
+    return {nodes, edges};
+}
+
 function objectExistsInArrOfObjects(array, object){
     objectExists = false;
     array.forEach((item) => {

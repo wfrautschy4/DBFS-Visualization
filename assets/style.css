@@ -3,6 +3,7 @@ html, body {
     height: 100%;
     margin: 0;
     font-family: Arial, sans-serif;
+    background-color: rgba(211,211,211,0.3);
 }
 
 /* Main layout using flexbox for side-by-side layout of the graph and tree */
@@ -15,16 +16,20 @@ html, body {
 
 /* Styling for the graph and tree containers */
 #network {
-    width: 48%; /* Set to slightly less than half to allow space between */
+    width: 50%; /* Set to slightly less than half to allow space between */
     height: 100%;
     border: 1px solid lightgray;
     margin-right: 2%; /* Space between the graph and the tree */
+    background-color: white;
+    border-radius: 10px;
 }
 
 #tree {
-    width: 48%; /* Set to slightly less than half */
+    width: 50%; /* Set to slightly less than half */
     height: 100%;
     border: 1px solid lightgray;
+    background-color: white;
+    border-radius: 10px;
 }
 
 /* Queue and destination sections below the graphs */
@@ -59,10 +64,10 @@ p {
     margin: 20px;
 }
 #data-container {
-    margin:10px;
+    /* margin:10px; */
     padding: 20px;
     border-radius: 20px;
-    background-color: rgba(211,211,211,0.3)
+    
 }
 table {
     width: 100%;
