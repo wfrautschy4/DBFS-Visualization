@@ -1,6 +1,4 @@
-# Project Title
-<h3>Depth and Breadth First Search Visualization</h3>
-
+# Depth and Breadth First Search Visualization
 ---
 
 ## Table of Contents
