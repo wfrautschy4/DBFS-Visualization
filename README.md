@@ -15,7 +15,7 @@
 
 ## Overview
 - **What**: This Project's goal is to visualize the node-traversing of the Depth and Breadth first search algorithm on a step-by-step controlled basis
-- **Why**: It exists to try to explain a non-to-easy to understand topic in a easier way to understand.
+- **Why**: It exists to try to explain a not-so-easy to understand topic in a easier way to understand.
 - **How**: The program uses vis.js to visualize the nodes and uses a step-by-step version of the both algorithms to show incremental results.
 
 ---
