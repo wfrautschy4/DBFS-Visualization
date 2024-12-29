@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Depth First Traversal with Tree Visualization</title>
-    <link rel="stylesheet" href="assets/style.css">
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
     <div id="container">
@@ -15,8 +15,12 @@
         <table>
             <tr>
                 <td class="left">
-                    
                     <div id="queue"><strong class="path-title">Traversed Path:</strong> <span id="stack-container"></span></div>
+                    <div>Graph Scheme: 
+                        <select name="scheme" id="graphScheme">
+                            <option value="Random">Random</option>
+                        </select>
+                    </div>
                 </td>
                 <td class="middle">
                     <h2>Depth-First Search</h2>
@@ -37,11 +41,12 @@
 
     <!-- Include Vis.js Library -->
     <script src="https://unpkg.com/vis-network@9.1.2/dist/vis-network.min.js"></script>
-    <script src="assets/scripts.js"></script>
+    <script src="assets/js/scripts.js"></script>
+    <script src="assets/js/visGraphs.js"></script>
     <script>
-        
-        edgeTraversingIcon = '';
+    
 
+        edgeTraversingIcon = '';
 
         // Generate the graph
         const graphDiv = document.querySelector("#network");
