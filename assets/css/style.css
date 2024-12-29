@@ -1,0 +1,122 @@
+/* Ensure the body and html elements take up the full height */
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: rgba(211,211,211,0.3);
+}
+
+/* Main layout using flexbox for side-by-side layout of the graph and tree */
+#container {
+    display: flex;
+    justify-content: space-between;
+    height: 60vh;
+    padding: 10px;
+}
+
+/* Styling for the graph and tree containers */
+#network {
+    width: 50%; /* Set to slightly less than half to allow space between */
+    height: 100%;
+    border: 1px solid lightgray;
+    margin-right: 2%; /* Space between the graph and the tree */
+    background-color: white;
+    border-radius: 10px;
+}
+
+#tree {
+    width: 50%; /* Set to slightly less than half */
+    height: 100%;
+    border: 1px solid lightgray;
+    background-color: white;
+    border-radius: 10px;
+}
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none; 
+    border: none;
+    /* needed for Firefox: */
+    overflow:hidden;
+    width: 120%;
+}
+/* Queue and destination sections below the graphs */
+#queue {
+    margin: 20px;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    min-height: 50px;
+}
+
+.stack-item {
+    display: inline-block;
+    padding: 5px 10px;
+    margin: 2px;
+    background-color: lightblue;
+    border-radius: 5px;
+}
+.queue-item {
+    display: inline-block;
+    padding: 5px 10px;
+    margin: 2px;
+    background-color: lightblue;
+    border-radius: 5px;
+}
+
+#destination {
+    margin: 20px;
+    font-size: 18px;
+    color: darkblue;
+    
+}
+
+p {
+    margin: 20px;
+}
+#data-container {
+    /* margin:10px; */
+    padding: 20px;
+    border-radius: 20px;
+    
+}
+table {
+    width: 100%;
+}
+td {
+    width: 33%;
+}
+.left {
+    text-align: left;
+    vertical-align: top;
+}
+.middle {
+    text-align: center;
+}
+.right {
+    text-align: right;
+}
+#reset-button {
+    font-weight: bold;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    width: 20%;
+    text-align: center;
+    margin-top: 100px;
+    background-color: #2B7DE9;
+    cursor:pointer;
+    box-shadow: 0px 2px 2px 0px black;
+    font-size: 14px;
+}
+#reset-button:active {
+    background-color: #2467be;
+    transform: translateY(2px);
+}
+.path-title {
+    display: block;
+    padding: 5px;
+}
+#graphScheme {
+    width: 150px;
+}
