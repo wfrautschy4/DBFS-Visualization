@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breadth First Traversal with Tree Visualization</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <div id="container">
+        <div id="network"></div>
+        <div id="tree"></div>
+    </div>
+    <div id="data-container">
+        <table>
+            <tr>
+                <td class="left">
+                    <div id="queue"><strong class="path-title">Shortest Path:</strong> <span id="queue-container"></span></div>
+                    <select name="scheme" id="graphScheme">
+                        <option value="Random">Random</option>
+                    </select>
+                </td>
+                <td class="middle">
+                    <h2>Breadth-First Search</h2>
+                    
+                    <p id="destination"><strong>Destination Node:</strong> </p>
+                    <div style="width:100%">
+                        <a id="reset-button">RESET</a>
+                    </div>
+                </td>
+                <td class="right">
+                    <p>Press <strong>Enter</strong> to start the traversal.</p>
+                    <p>Auto-Traverse: <input class="auto-traverse" type="checkbox" checked></p>
+                    <p>Nagivate All Neighbors: <input class="navAllNeighbors" type="checkbox" checked></p>
+                    <p>Speed: <input class="speed-range" type="range"></p>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Include Vis.js Library -->
+    <script src="https://unpkg.com/vis-network@9.1.2/dist/vis-network.min.js"></script>
+    <script src="assets/js/scripts.js"></script>
+    <script src="assets/js/visGraphs.js"></script>
+    <script src="assets/js/GraphTraverser.js"></script>
+    <script>
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // Initialize visGraphs and GraphTraverser
+        const graphDiv = document.querySelector("#network");
+        const treeDiv = document.querySelector("#tree");
+        const visGraphs = new visGraph(graphDiv, treeDiv);
+        const Traverser = new GraphTraverser(visGraphs);
+
+        //Genearte a new graph
+        initializeNewGraph();
+        
+
+        //Generate a random destination node
+        let nodeCount = visGraphs.getGraphData().nodes.get().length;
+        let randomDestinationNode = Math.floor(Math.random() * (nodeCount - 2)) + 2 // [2, nodeCount]
+
+        //Set the start and destination nodes
+        Traverser.changeStartNode(1);
+        Traverser.changeDestinationNode(randomDestinationNode);
+
+        //Read Page Controls
+        const speedRange = document.querySelector(".speed-range");
+        const autoNavBox = document.querySelector('.auto-traverse');
+        const navAllNeighborsBox = document.querySelector('.navAllNeighbors');
+        const destinationIDBox = document.querySelector('#destination');
+        function updateInterface(){
+            Traverser.changeSpeed(10*(100-speedRange.value)+200);
+            Traverser.changeAutoNav(autoNavBox.checked);
+            Traverser.changeNavAllNeighbors(navAllNeighborsBox.checked);
+
+            destinationIDBox.innerHTML = `<strong>Destination Node:</strong> ${Traverser.getDestinationNode()}`;
+        }
+
+        
+        //Update the interface every 200ms
+        var intervalId = window.setInterval(function(){
+            updateInterface();
+        }, 200);
+
+        // Step through traversal on Enter key press
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                Traverser.traverseStep();
+            } else if (event.key == "c"){
+                displayCycles();
+            }
+        });
+
+        async function displayCycles(){
+            let cycles = Traverser.findGraphCycles();
+            if(cycles.length > 0){
+                for(let i = 0; i < cycles.length; i++){
+                    await sleep(Traverser.speed);
+                    visGraphs.highlightGraphPath(cycles[i], 'red');          
+                    await sleep(Traverser.speed);
+                    visGraphs.removeGraphHighlights();
+                    
+                }
+            }
+        }
+        
+    </script>
+</body>
+</html>
