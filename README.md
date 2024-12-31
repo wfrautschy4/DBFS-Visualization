@@ -9,7 +9,6 @@
 5. [Usage](#usage)
 6. [Visuals](#visuals)
 7. [Future Enhancements](#future-enhancements)
-8. [Contributing](#contributing)
 
 ---
 
@@ -72,15 +71,9 @@
 </table>
 
 ## Future Enhancements
-- Combine the HTML files into one
-- Allow for the creation of graphs without needing to code.
-- Add ability to chose starting and ending nodes
+- Add more types of graphs for generation
+- Allow custom graph imports through a json file
+- Implement other searching algorithms like dijkstra and A*
+- Find new graph visualization to support larger graphs?
 
-## Contributing
-1. Fork the repository
-2. Create a feature branch
-```bash
-git checkout -b feature-name
-```
-3. Commit changes and submit a pull request
 
