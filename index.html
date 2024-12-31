@@ -202,8 +202,11 @@
                 Traverser.changeStartNode(getRandomNodeID(nodeCount));
             }
             if(endNodeBox.value == "random"){
-                Traverser.changeDestinationNode(getRandomNodeID(nodeCount));
+                const randomNode = getRandomNodeID(nodeCount);
+                Traverser.changeDestinationNode(randomNode);
+                updateDestinationNodeLabel(randomNode);
             }
+            
 
             //Clear Path Display
             updatePathDisplay([]); //Clear the shortest path display
@@ -232,6 +235,8 @@
                 resetButton.click();
             } else if(event.key === "c"){
                 showCyclesButton.click();
+            } else if(event.key === "g"){
+                generateButton.click();
             }
         });
         // window.setInterval(() => {
