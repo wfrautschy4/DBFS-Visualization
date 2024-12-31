@@ -105,7 +105,7 @@ const visGraph = class visGraphs {
         this.graphData.edges.forEach((edge) => {
             this.graphData.edges.update({
                 id: edge.id,
-                color: { color: '#97C2FC', highlight: '#97C2FC' }, // Reset the edge color
+                color: { color: '#2B7DE9', highlight: '#2B7DE9' }, // Reset the edge color
                 width: 1,
             });
         });
@@ -121,6 +121,10 @@ const visGraph = class visGraphs {
         //Clear Previous Graphs
         this.graphData.nodes.clear();
         this.graphData.edges.clear();
+        this.treeData.nodes.clear(); 
+        this.treeData.edges.clear();
+    }
+    clearTree(){
         this.treeData.nodes.clear(); 
         this.treeData.edges.clear();
     }

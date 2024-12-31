@@ -1,29 +1,82 @@
+
 function initializeNewGraph(){
     //Reinitialize with new graph
-    const {nodes:nodes, edges:edges} = generateUndirectedConnectedGraph(40,15);
+    //Get node and edge count
+    const nodeCount = document.querySelector('#nodeCount').value;
+    const edgeCount = document.querySelector('#edgeCount').value - nodeCount + 1;
+    const {nodes:nodes, edges:edges} = generateUndirectedConnectedGraph(nodeCount,edgeCount);
     visGraphs.add({nodes, edges});
 
     //Find new Destination Node
     destinationNodeID = Math.floor(Math.random() * (nodes.length-2)) + 2; //[2, nodes.length]
-    Traverser.changeDestinationNode(destinationNodeID); 
+    Traverser.changeStartNode(getRandomNodeID(nodes.length));
+    Traverser.changeDestinationNode(destinationNodeID);    
+    updateDestinationNodeLabel(destinationNodeID);
 
     //Resize Graph Window
     visGraphs.stabilizeGraph();
+    
+    //Update Interface Displays and Controls
+    updateStatsDisplay()
+}
+//
+function getRandomNodeID(nodeCount){
+    return Math.floor(Math.random() * (nodeCount-1)) + 1;  
+}
+function updateStatsDisplay(){
+    const hasHamiltonianCycle = document.querySelector('.hamiltonianCycle');
+    const isWeaklyConnected = document.querySelector('.weaklyConnected');
+    const isStronglyConnected = document.querySelector('.stronglyConnected');
+
+    const trueHTML = '<span style="color: green;font-weight: bold;">True</span>';
+    const falseHTML = '<span style="color: red;font-weight: bold;">False</span>';
+
+    //Update blocks
+    hasHamiltonianCycle.innerHTML = Traverser.hasHamiltonianCycle() ? trueHTML : falseHTML;
+    isWeaklyConnected.innerHTML = Traverser.isWeaklyConnected() ? trueHTML : falseHTML;
+    isStronglyConnected.innerHTML = Traverser.isStronglyConnected() ? trueHTML : falseHTML;
+
+    //Update Start Node and End Node Options
+    const startNodeSelect = document.querySelector("#startNode");
+    const endNodeSelect = document.querySelector("#endNode");
+
+    //Clear Children and Reappend new Node Labels
+    startNodeSelect.innerHTML = '<option value="random">Random</option>';
+    const listOfNodeLabels = visGraphs.getGraphData().nodes.get().map(node => node.label);
+    for(let i = 0; i < listOfNodeLabels.length; i++){
+        const optionNode = document.createElement("option");
+        optionNode.setAttribute("value", listOfNodeLabels[i]);
+        optionNode.innerHTML = listOfNodeLabels[i];
+        startNodeSelect.appendChild(optionNode);
+    }
+    endNodeSelect.innerHTML = startNodeSelect.innerHTML;
+    
 }
 
-//Create button function
-const resetButton = document.querySelector("#reset-button");
-resetButton.addEventListener("click", () => {
-    //Clear Graphs and Traverser
-    visGraphs.clear();
-    Traverser.reset();
+function updateDestinationNodeLabel(destNodeID){
+    //Update Destination Display
+    const nodeLabel = visGraphs.getGraphData().nodes.get().filter(node => (node.id == destNodeID))[0].label;
+    document.querySelector("#destination").innerHTML = `Destination: ${nodeLabel}`
+}
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+async function displayCycles(){
+    let cycles = Traverser.findGraphCycles();
+    if(cycles.length > 0){
+        for(let i = 0; i < cycles.length; i++){
+            await sleep(Traverser.speed);
+            visGraphs.highlightGraphPath(cycles[i], 'red');          
+            await sleep(Traverser.speed);
+            visGraphs.removeGraphHighlights();
+        }
+    } else {
+        alert("No cycles found in the graph.");
+    }
+}
 
-    //Generate New Graph
-    initializeNewGraph();
 
-    //Clear Path Display
-    updatePathDisplay([]); //Clear the shortest path display
-});
+
 function generateGraphToGetHome(){
     const nodes = [];
     const edges = [];
@@ -164,43 +217,4 @@ function findNavigatableNodesWithBFS(graphData, startNode){
     }
 
     return visited;
-}
-function graphIsComplete(graphData){
-    //Check that every node has an edge adjacent to every other node
-    complete = true;
-
-    for(let i = 0; i < graphData.nodes.length; i++){
-        let neighbors = new Set(graphNodes.edges.find(edge => (edge.from == graphData.nodes[i])));
-        let allNodesMinusCurrent = new Set(graphData.nodes);
-        allNodesMinusCurrent.delete(graphData.nodes[i]);
-
-        //Check that the edges incident to the chosen node are connected to all other nodes
-        if(!neighbors.isSubsetOf(allNodesMinusCurrent) || !allNodesMinusCurrent.isSubsetOf(neighbors)){
-            complete = false;
-        }
-    }
-}
-function graphIsWeaklyConnected(graphData){
-    //Perform BFS and ensure that all nodes are traversed
-    const allNodes = new Set(graphData.nodes.map(node => node.id));
-    const searchedNodes = findNavigatableNodesWithBFS(graphData, graphData.nodes[0].id);
-    return (allNodes.isSubsetOf(searchedNodes) && searchedNodes.isSubsetOf(allNodes));
-}
-
-function graphIsStronglyConnected(graphData) {
-    //Perform BFS and ensure that all nodes are traversed from every node in the graph
-    const stronglyConnected = true;
-    const allNodes = new Set(graphData.nodes.map(node => node.id));
-
-    for(let i = 0; i < allNodes.size; i++) {
-        //Search whole graph starting at the given node
-        let searchedNodes = findNavigatableNodesWithBFS(graphData, graphData.nodes[i].id);
-
-        //Check that whole graph is navigatable from that point
-        if(!allNodes.isSubsetOf(searchedNodes) || !searchedNodes.isSubsetOf(allNodes)){
-            stronglyConnected = false;
-            break;
-        }
-    }
-    return stronglyConnected;    
 }

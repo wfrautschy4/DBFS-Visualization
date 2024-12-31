@@ -21,13 +21,14 @@
 ---
 
 ## Features
-- Real-time DFS visualization.
-- Highlighted nodes and edges during traversal.
-- Support for exploring large graphs.
+- Real-time Graph Traversal visualization.
+- Visualization Highlights Nodes in controlled steps
+- Options for Custom and generated Graphs of certain types
 - Control over Speed of Traversal
-- Customization <b>OTW</b>
+- Statistics which hold data about the graphs are displayed
+- Ability to change graph navigation methods - (Breadth and Depth Supported / Djikstr and A* Soon)
+-
 ---
-
 ## Technologies Used
 - **Languages**: JavaScript, HTML, CSS
 - **Libraries**: [vis.js](https://github.com/visjs)

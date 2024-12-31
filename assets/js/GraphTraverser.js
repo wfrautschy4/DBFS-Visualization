@@ -12,6 +12,7 @@ const GraphTraverser = class Traverser {
         this.startNode = 1;
         this.destinationNode = 1;
         this.traversalNodeList.push(this.startNode);
+        this.cycles = [];
 
         //Environmental Variables
         this.speed = 700;
@@ -20,8 +21,8 @@ const GraphTraverser = class Traverser {
 
         //Init Navigation Method States
         this.navMethods = Object.freeze({
-            BREADTH:   Symbol("breadth"),
-            DEPTH:  Symbol("depth")
+            BREADTH:   "breadth",
+            DEPTH:  "depth"
         });
         this.navMethod = this.navMethods.BREADTH;
     }
@@ -29,7 +30,6 @@ const GraphTraverser = class Traverser {
     traverseStep(){
         //Check if traversal is over
         if(this.traversalNodeList.length == 0 || this.destinationFound){
-            this.isTraversing = false;
             return;
         }
 
@@ -104,7 +104,7 @@ const GraphTraverser = class Traverser {
         }, this.speed);
 
         if (this.navAllNeighbors && (this.navMethod != this.navMethods.DEPTH)) {
-            for (let i = 0; i < 100; i++) {
+            for (let i = 0; i < this.traversalNodeList.length; i++) {
                 this.traverseStep();
             }
         }
@@ -215,12 +215,71 @@ const GraphTraverser = class Traverser {
 
         return uniqueCycles;
     }
-    findHamiltonianPath(){
-
-    }
-    findHamiltonianCycle(){
+    hasHamiltonianCycle(){
         //Check if there is a Cycle that contains all nodes
+        this.cycles = this.findGraphCycles();
 
+        const allCycleSets = this.cycles.map(cycle => new Set(cycle));
+        const setOfAllNodes = new Set(this.visGraphs.getGraphData().nodes.get().map(node => node.id));
+        
+        for(let i = 0; i < allCycleSets.length; i++){
+            if(allCycleSets[i].isSubsetOf(setOfAllNodes) && setOfAllNodes.isSubsetOf(allCycleSets[i])){
+                return true;
+            }
+        }
+
+        return false;
+        
+    }
+    graphIsComplete(){
+        //Check that every node has an edge adjacent to every other node
+        const graphData = this.visGraphs.getGraphData();
+        const nodes = graphData.nodes.get();
+        const edges = graphData.edges.get();
+        complete = true;
+
+        for(let i = 0; i < nodes.length; i++){
+            let neighbors = new Set(edges.find(edge => (edge.from == nodes[i])));
+            let allNodesMinusCurrent = new Set(nodes);
+            allNodesMinusCurrent.delete(nodes[i]);
+    
+            //Check that the edges incident to the chosen node are connected to all other nodes
+            if(!neighbors.isSubsetOf(allNodesMinusCurrent) || !allNodesMinusCurrent.isSubsetOf(neighbors)){
+                complete = false;
+            }
+        }
+        return complete;
+    }
+    isWeaklyConnected(){
+        //Perform BFS and ensure that all nodes are traversed
+        const graphData = this.visGraphs.getGraphData();
+        const nodes = graphData.nodes.get();
+        const edges = graphData.edges.get();
+
+        const allNodes = new Set(nodes.map(node => node.id));
+        const searchedNodes = findNavigatableNodesWithBFS({nodes, edges}, nodes[0].id);
+        return (allNodes.isSubsetOf(searchedNodes) && searchedNodes.isSubsetOf(allNodes));
+    }
+    
+    isStronglyConnected() {
+        //Perform BFS and ensure that all nodes are traversed from every node in the graph
+        const graphData = this.visGraphs.getGraphData();
+        const nodes = graphData.nodes.get();
+        const edges = graphData.edges.get();
+        const stronglyConnected = true;
+        const allNodes = new Set(nodes.map(node => node.id));
+    
+        for(let i = 0; i < allNodes.size; i++) {
+            //Search whole graph starting at the given node
+            let searchedNodes = findNavigatableNodesWithBFS({nodes, edges}, nodes[i].id);
+    
+            //Check that whole graph is navigatable from that point
+            if(!allNodes.isSubsetOf(searchedNodes) || !searchedNodes.isSubsetOf(allNodes)){
+                stronglyConnected = false;
+                break;
+            }
+        }
+        return stronglyConnected;    
     }
     
     //--------- Alter Env Variables --------------------------------------
@@ -228,10 +287,14 @@ const GraphTraverser = class Traverser {
         state = state.toLowerCase();
         //Check that traversal is not already occuring
         if(!this.isTraversing){
-            //If state is a valid traversal state
-            if(Object.values(this.navMethods).includes(state)){
-                //Assign new traversal method
-                this.navMethod = this.navMethods[state];
+            // If state is a valid traversal state
+            const navMethodKey = Object.keys(this.navMethods).find(
+                key => this.navMethods[key].toLowerCase() === state
+            );
+
+            if (navMethodKey) {
+                // Assign new traversal method
+                this.navMethod = this.navMethods[navMethodKey];
             } else {
                 console.error("ERROR: Navigation method does not exist!");
             }
@@ -280,12 +343,12 @@ const GraphTraverser = class Traverser {
         this.navAllNeighbors = state;
     }
     reset(){
-        this.traversalNodeList = [];
-        this.traversalNodeList.push(this.startNode);
+        this.traversalNodeList = [this.startNode];
         this.visited.clear();
         this.parent = {}; // Clear parent mapping
         this.destinationFound = false; // Reset the destination found flag
         this.shortestPath = [];
+        this.cycles = [];
 
         this.isTraversing = false;
     }

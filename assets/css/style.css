@@ -32,19 +32,26 @@ html, body {
     border-radius: 10px;
 }
 select {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none; 
     border: none;
-    /* needed for Firefox: */
+
     overflow:hidden;
-    width: 120%;
+    background-color: inherit;
+    /* width: 120%; */
 }
+.searchMethod {
+    text-align: center;
+    display: inline-block;
+    font-size: 1.5em;
+    font-weight: bold;
+    
+
+}
+
 /* Queue and destination sections below the graphs */
 #queue {
     margin: 20px;
     font-family: Arial, sans-serif;
-    padding: 20px;
+    /* padding: 20px; */
     min-height: 50px;
 }
 
@@ -62,7 +69,9 @@ select {
     background-color: lightblue;
     border-radius: 5px;
 }
-
+.queue-container {
+    display:inline-block;
+}
 #destination {
     margin: 20px;
     font-size: 18px;
@@ -81,6 +90,7 @@ p {
 }
 table {
     width: 100%;
+    
 }
 td {
     width: 33%;
@@ -91,32 +101,67 @@ td {
 }
 .middle {
     text-align: center;
+    vertical-align:top;
+    padding-top: 20px;
 }
 .right {
     text-align: right;
+    vertical-align: top;
 }
-#reset-button {
+.button {
     font-weight: bold;
     color: white;
     padding: 10px;
     border-radius: 5px;
     border: none;
-    width: 20%;
+    width: auto;
     text-align: center;
-    margin-top: 100px;
+    margin: 5px;
     background-color: #2B7DE9;
     cursor:pointer;
     box-shadow: 0px 2px 2px 0px black;
     font-size: 14px;
+    display: inline-block;
 }
-#reset-button:active {
+.button:active {
     background-color: #2467be;
     transform: translateY(2px);
 }
 .path-title {
-    display: block;
-    padding: 5px;
+    display: inline-block;
+    margin-top: 7px;
+    /* padding: 5px; */
+}
+.table-heading {
+    font-weight: bold;
 }
 #graphScheme {
     width: 150px;
 }
+.settings {
+    border-spacing: 15px;
+    text-align: left;
+}
+.settings tr {
+    padding: 5px;
+    /* display: block; */
+    border: black 1px solid;
+}
+.settings td {
+    width: 50%;
+    
+}
+#showCycles {
+    display:inline-block;
+    width: auto;
+}
+.settings td div {
+    display: inline-block;
+    /* padding: 5px; */
+}
+.center-button-div {
+    margin-top: 30px;
+    display: block;
+    height: 100px;
+}
+
