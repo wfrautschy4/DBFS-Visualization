@@ -27,8 +27,8 @@
 - Control over Speed of Traversal
 - Statistics which hold data about the graphs are displayed
 - Ability to change graph navigation methods - (Breadth and Depth Supported / Djikstr and A* Soon)
-- 
--
+ 
+
 ---
 ## Technologies Used
 - **Languages**: JavaScript, HTML, CSS
