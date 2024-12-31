@@ -14,9 +14,9 @@
 ---
 
 ## Overview
-- **What**: This Project's goal is to visualize the node-traversing of the Depth and Breadth first search algorithm on a step-by-step controlled basis
-- **Why**: It exists to try to explain a not-so-easy to understand topic in a easier way to understand.
-- **How**: The program uses vis.js to visualize the nodes and uses a step-by-step version of the both algorithms to show incremental results.
+- **What**: This Project's goal is to visualize the node-traversing of graph searching methods such as Depth and Breadth first on a step-by-step controlled basis. The program also allows for control over graphs and displays info about the generated graphs
+- **Why**: It exists to try to explain a not-so-easy to understand topic in a easier way to understand. It also allows for experimentation and exploring at your own pace to fully understand the concept in an interactive way.
+- **How**: The program uses vis.js to visualize the nodes and utilizes algorithms like Breadth and Depth first search to navigate and discover underlying features of the graph.
 
 ---
 
@@ -27,6 +27,7 @@
 - Control over Speed of Traversal
 - Statistics which hold data about the graphs are displayed
 - Ability to change graph navigation methods - (Breadth and Depth Supported / Djikstr and A* Soon)
+- 
 -
 ---
 ## Technologies Used
@@ -44,12 +45,16 @@
     ```bash
     cd DBFS-Visualization
     ```
-3. Open ```depthVisualization.html``` or ```breadthVisualization.html``` in your browser
+3. Open ```index.html``` in your browser
 
 ## Usage 
-1. Generate a graph of random nodes and edges between them
-2. Chose between using depth or breadth first search depending on the file you open
-3. Adjust visualization settings like speed, auto-traversal, and navigating more than one node per step
+1. Open file
+2. Set the type of graph you want to generate
+3. Set the node and edge count of your graph (if generated)
+4. Adjust visualization settings like speed, auto-traversal, and navigating more than one node per step
+5. Choose between breadth and depth first search to navigate the graph
+6. Click the SEARCH button or press the Space bar to start searching
+7. Reset to keep the graph and settings or Generate a new Graph to start new
 
 
 ## Visuals
